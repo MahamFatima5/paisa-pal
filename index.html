@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paisa Pal - Expense Tracker with MCP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #22c55e;
+      --accent2: #06b6d4;
+      --accent3: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Poppins", system-ui, sans-serif;
+      background: radial-gradient(circle at top left, #14532d 0%, var(--bg) 45%, #0c4a6e 100%);
+      background-attachment: fixed;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+    /* Navbar */
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.7);
+      border-bottom: 1px solid var(--border);
+    }
+    nav .container { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+    .logo { font-weight: 700; font-size: 1.2rem; color: #fff; }
+    .logo span { color: var(--accent); }
+    nav .links a { color: var(--muted); margin-left: 22px; font-size: 0.95rem; }
+    nav .links a:hover { color: #fff; text-decoration: none; }
+
+    /* Hero */
+    .hero { padding: 90px 0 60px; text-align: center; }
+    .badge {
+      display: inline-block; padding: 6px 14px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--card);
+      font-size: 0.85rem; color: var(--muted); margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 700; line-height: 1.15;
+      background: linear-gradient(90deg, #86efac, #67e8f9, #fcd34d);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero p { max-width: 640px; margin: 20px auto 34px; color: var(--muted); font-size: 1.1rem; }
+    .btn {
+      display: inline-block; padding: 13px 26px; border-radius: 12px;
+      font-weight: 600; margin: 6px; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover { transform: translateY(-2px); text-decoration: none; }
+    .btn-primary { background: var(--accent); color: #052e16; box-shadow: 0 10px 30px rgba(34, 197, 94, 0.35); }
+    .btn-ghost { border: 1px solid var(--border); color: var(--text); background: var(--card); }
+
+    /* Chat preview */
+    .chat {
+      max-width: 520px; margin: 10px auto 0; padding: 22px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 22px; text-align: left;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+    .chat-head { color: var(--muted); font-size: 0.8rem; margin-bottom: 14px; }
+    .msg { padding: 12px 16px; border-radius: 14px; margin: 10px 0; max-width: 85%; font-size: 0.95rem; }
+    .user { background: #1e3a8a; margin-left: auto; border-bottom-right-radius: 4px; }
+    .bot { background: #14532d; border-bottom-left-radius: 4px; }
+    .tag { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 6px; background: rgba(255,255,255,0.12); margin-bottom: 6px; color: var(--muted); }
+
+    /* Sections */
+    section { padding: 70px 0; }
+    h2 { font-size: 2rem; text-align: center; margin-bottom: 10px; }
+    .sub { text-align: center; color: var(--muted); margin-bottom: 40px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .card {
+      padding: 26px; border-radius: 18px; background: var(--card);
+      border: 1px solid var(--border); transition: transform 0.25s, border-color 0.25s;
+    }
+    .card:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .icon { font-size: 2rem; margin-bottom: 12px; }
+    .card h3 { margin-bottom: 8px; font-size: 1.1rem; color: #fff; }
+    .card p { color: var(--muted); font-size: 0.95rem; }
+    code {
+      background: rgba(255,255,255,0.08); padding: 2px 7px; border-radius: 6px;
+      font-family: Consolas, monospace; font-size: 0.88rem; color: #fcd34d;
+    }
+
+    /* Steps */
+    .steps { counter-reset: step; max-width: 720px; margin: 0 auto; }
+    .step { display: flex; gap: 18px; margin-bottom: 22px; }
+    .step::before {
+      counter-increment: step; content: counter(step);
+      min-width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #052e16; font-weight: 700;
+    }
+    .step pre {
+      margin-top: 8px; padding: 12px 14px; border-radius: 10px;
+      background: #020617; border: 1px solid var(--border);
+      overflow-x: auto; font-size: 0.88rem; color: #a5f3fc;
+    }
+
+    /* Video */
+    .video-wrap {
+      position: relative; padding-top: 56.25%; border-radius: 18px;
+      overflow: hidden; border: 1px solid var(--border);
+      background: #020617;
+    }
+    .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+    footer {
+      text-align: center; padding: 40px 0; color: var(--muted);
+      border-top: 1px solid var(--border); font-size: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+      nav .links a { margin-left: 12px; font-size: 0.85rem; }
+      .hero { padding-top: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <div class="logo">Paisa<span>Pal</span></div>
+      <div class="links">
+        <a href="#how">How it works</a>
+        <a href="#tools">Tools</a>
+        <a href="#demo">Demo</a>
+        <a href="#run">Run it</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <span class="badge">Amazon Developer Hackathon · Alexa+ track</span>
+      <h1>Kharcha likho, bas bolo.</h1>
+      <p>Paisa Pal is an expense tracker you control in plain language. Type what you spent, and an MCP server saves it and gives you a monthly summary.</p>
+      <a class="btn btn-primary" href="https://github.com/MahamFatima5/paisa-pal" target="_blank">View on GitHub</a>
+      <a class="btn btn-ghost" href="#demo">Watch the demo</a>
+
+      <div class="chat" style="margin-top: 50px;">
+        <div class="chat-head">Example conversation</div>
+        <div class="msg user">chai pe 400 kharch kiye</div>
+        <div class="msg bot"><span class="tag">add_expense</span><br>Saved: 400.0 rupees for chai.</div>
+        <div class="msg user">is mahine ka summary do</div>
+        <div class="msg bot"><span class="tag">monthly_summary</span><br>Is mahine total 400 rupees kharch hue.<br>chai: 400</div>
+      </div>
+    </div>
+  </header>
+
+  <section id="how">
+    <div class="container">
+      <h2>How it works</h2>
+      <p class="sub">A simple chat UI talks to a self-hosted MCP server over Streamable HTTP.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="icon">💬</div>
+          <h3>1. You type</h3>
+          <p>A chat message in plain language, like a voice assistant request.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🔌</div>
+          <h3>2. MCP server</h3>
+          <p>A Python MCP server on <code>/mcp</code> picks the right tool and runs it.</p>
+        </div>
+        <div class="card">
+          <div class="icon">📊</div>
+          <h3>3. You get the answer</h3>
+          <p>The expense is saved to JSON, and summaries are calculated from the same data.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tools">
+    <div class="container">
+      <h2>MCP tools</h2>
+      <p class="sub">Two tools, exposed to any MCP-compatible client.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="icon">🧾</div>
+          <h3><code>add_expense</code></h3>
+          <p>Takes an amount, a category and a note, then saves the expense with today's date.</p>
+        </div>
+        <div class="card">
+          <div class="icon">📈</div>
+          <h3><code>monthly_summary</code></h3>
+          <p>Returns this month's total and a category-wise breakdown, highest first.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="demo">
+    <div class="container">
+      <h2>Demo video</h2>
+      <p class="sub">Server, chat UI, and the saved data, in under 3 minutes.</p>
+      <div class="video-wrap">
+        <!-- Replace VIDEO_ID with your YouTube video ID, e.g. https://www.youtube.com/embed/VIDEO_ID -->
+        <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="Paisa Pal demo" allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section id="run">
+    <div class="container">
+      <h2>Run it locally</h2>
+      <p class="sub">The chat needs the MCP server running on your machine.</p>
+      <div class="steps">
+        <div class="step">
+          <div>
+            <strong>Install</strong>
+            <pre>python -m venv .venv
+.venv\Scripts\activate
+pip install "mcp[cli]" streamlit</pre>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <strong>Start the MCP server</strong>
+            <pre>python mcp_server/server.py</pre>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <strong>Start the chat UI (new terminal)</strong>
+            <pre>streamlit run chat_app.py</pre>
+            <p style="color: var(--muted); margin-top: 6px;">Then open <code>http://localhost:8501</code>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      Built for the Amazon Developer Hackathon · MIT License ·
+      <a href="https://github.com/MahamFatima5/paisa-pal" target="_blank">GitHub</a>
+    </div>
+  </footer>
+
+</body>
+</html>
