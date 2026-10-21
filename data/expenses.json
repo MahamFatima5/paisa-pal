@@ -16,5 +16,23 @@
     "amount": 300.0,
     "category": "chai",
     "note": "aaj chai"
+  },
+  {
+    "date": "2026-10-20",
+    "amount": 300.0,
+    "category": "chai",
+    "note": "aaj chai"
+  },
+  {
+    "date": "2026-10-21",
+    "amount": 150.0,
+    "category": "food",
+    "note": "lunch"
+  },
+  {
+    "date": "2026-10-21",
+    "amount": 400.0,
+    "category": "chai",
+    "note": "chai pe 400 kharch kiye"
   }
 ]
