@@ -35,3 +35,7 @@ Open http://localhost:8501 and try "chai pe 300 kharch kiye" or "is mahine ka su
 ## License
 
 MIT
+
+##Demo Video
+
+Demo video: https://youtu.be/j2zK8mdmNXo
